@@ -26,7 +26,12 @@ Since we have some dynamic factors in those messages, namely the current player,
 we have declared them as functions, so that the actual message gets created with 
 current data every time we need it.
 */
-const audio = new Audio("./click.mp3")
+
+let dificulty = "";
+
+const audioClick = new Audio("./click.mp3");
+const audioEnd = new Audio("./end.mp3");
+const audioWin = new Audio("./win.mp3");
 const winningMessage = () => `Han guanyat la partida les ${currentPlayer}'s!`;
 const drawMessage = () => `Heu empatat la partida!`;
 const currentPlayerTurn = () => `És el torn de les ${currentPlayer}'s`;
@@ -66,7 +71,6 @@ function handleCellPlayed(clickedCell, clickedCellIndex) {
     */
     gameState[clickedCellIndex] = currentPlayer;
     clickedCell.innerHTML = currentPlayer;
-    audio.play();
     handleResultValidation();
     
 }
@@ -75,13 +79,12 @@ function handleComputerPlay() {
     if (gameActive == false) {
         return;
     }
-    cell = computerMedium();
+    cell = computerPlayByLevel();
     if (checkSpotsAvailable() == false)  {
         return;
     }
     gameState[cell] = currentPlayer;
     document.querySelector(`[data-cell-index="${cell}"]`).innerHTML = currentPlayer;
-    audio.play();
     handleResultValidation();
 }
 
@@ -121,6 +124,22 @@ function computerMedium() {
     else return number;
 }
 
+function computerHard() {
+    computerRandom();
+}
+
+function computerPlayByLevel() {
+    let cell;
+    if (dificulty === "easy") {
+        cell = computerRandom();
+    } else if (dificulty === "medium") {
+        cell = computerMedium();
+    } else {
+        cell = computerHard();
+    }
+    return cell;
+}
+
 function handlePlayerChange() {
     currentPlayer = currentPlayer === "X" ? "O" : "X";
     statusDisplay.innerHTML = currentPlayerTurn();
@@ -144,6 +163,7 @@ function handleResultValidation() {
     if (roundWon) {
         statusDisplay.innerHTML = winningMessage();
         gameActive = false;
+        audioWin.play();
         return;
     }
     /* 
@@ -154,7 +174,11 @@ function handleResultValidation() {
     if (roundDraw) {
         statusDisplay.innerHTML = drawMessage();
         gameActive = false;
+        audioEnd.play();
         return;
+    }
+    else {
+        audioClick.play();
     }
     /*
     If we get to here we know that the no one won the game yet, 
@@ -173,6 +197,8 @@ function changeWinnerColor(winCondition) {
 function setOriginalColor() {
     const originalColor = "white";
     document.querySelectorAll('.cell').forEach(cell => cell.style.color = originalColor);
+    document.querySelectorAll('li').forEach(li => li.style.color = originalColor);
+    document.querySelector(`#${dificulty}`).style.fontWeight = "normal";
 }
 
 function handleCellClick(clickedCellEvent) {
@@ -209,10 +235,26 @@ function handleRestartGame() {
     document.querySelectorAll('.cell')
                .forEach(cell => cell.innerHTML = "");
     setOriginalColor();
+    document.querySelectorAll('.cell').forEach(cell => cell.removeEventListener('click', handleCellClick));
+    document.querySelectorAll('li').forEach(li => li.addEventListener('click', prepareGame));
+}
+
+function prepareGame(clickedDificultyEvent) {
+    const colorDificulty = "yellow";
+    const clickedDificulty = clickedDificultyEvent.target;
+    dificulty = clickedDificulty.getAttribute('id');
+    document.querySelector(`#${dificulty}`).style.color = colorDificulty;
+    document.querySelector(`#${dificulty}`).style.fontWeight = "bold";
+    startGame();
+}
+
+function startGame() {
+    document.querySelectorAll('li').forEach(li => li.removeEventListener('click', prepareGame));
+    document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick));
 }
 /*
 And finally we add our event listeners to the actual game cells, as well as our 
 restart button
 */
-document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick));
+document.querySelectorAll('li').forEach(li => li.addEventListener('click', prepareGame));
 document.querySelector('.game--restart').addEventListener('click', handleRestartGame);
