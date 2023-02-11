@@ -169,6 +169,10 @@ function changeWinnerColor(winCondition) {
     document.querySelector(`[data-cell-index="${winCondition[2]}"]`).style.color = "blue";
 }
 
+function setOriginalColor() {
+    document.querySelectorAll('.cell').forEach(cell => cell.style.color = "black");
+}
+
 function handleCellClick(clickedCellEvent) {
     /*
     We will save the clicked html element in a variable for easier further use
@@ -202,6 +206,7 @@ function handleRestartGame() {
     statusDisplay.innerHTML = currentPlayerTurn();
     document.querySelectorAll('.cell')
                .forEach(cell => cell.innerHTML = "");
+    setOriginalColor();
 }
 /*
 And finally we add our event listeners to the actual game cells, as well as our 
