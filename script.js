@@ -164,13 +164,15 @@ function handleResultValidation() {
 }
 
 function changeWinnerColor(winCondition) {
-    document.querySelector(`[data-cell-index="${winCondition[0]}"]`).style.color = "blue";
-    document.querySelector(`[data-cell-index="${winCondition[1]}"]`).style.color = "blue";
-    document.querySelector(`[data-cell-index="${winCondition[2]}"]`).style.color = "blue";
+    const color = "yellow";
+    document.querySelector(`[data-cell-index="${winCondition[0]}"]`).style.color = color;
+    document.querySelector(`[data-cell-index="${winCondition[1]}"]`).style.color = color;
+    document.querySelector(`[data-cell-index="${winCondition[2]}"]`).style.color = color;
 }
 
 function setOriginalColor() {
-    document.querySelectorAll('.cell').forEach(cell => cell.style.color = "black");
+    const originalColor = "white";
+    document.querySelectorAll('.cell').forEach(cell => cell.style.color = originalColor);
 }
 
 function handleCellClick(clickedCellEvent) {
