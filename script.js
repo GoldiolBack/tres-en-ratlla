@@ -26,6 +26,7 @@ Since we have some dynamic factors in those messages, namely the current player,
 we have declared them as functions, so that the actual message gets created with 
 current data every time we need it.
 */
+let move = 0;
 
 let dificulty = "";
 
@@ -44,6 +45,22 @@ const winningConditions = [
     [2, 5, 8],
     [0, 4, 8],
     [2, 4, 6]
+];
+const winningPatterns = [
+    [0, 5],
+    [0, 7],
+    [2, 3],
+    [2, 7],
+    [6, 1],
+    [6, 5],
+    [8, 1],
+    [8, 3]
+];
+const lateralLines = [
+    [0, 1, 2],
+    [6, 7, 8],
+    [0, 3, 6],
+    [2, 5, 8]
 ];
 /*
 We set the inital message to let the players know whose turn it is
@@ -125,7 +142,189 @@ function computerMedium() {
 }
 
 function computerHard() {
-    computerRandom();
+    let number = [9, 9, 9, 9, 9, 9, 9, 9, 9];
+    let eval = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    if (gameState[4] === ""){
+        if (Math.random() < 0.7) {
+            return 4;
+        }
+        else {
+            return computerMedium();
+        }
+    } else if (gameState[4] === "X" && move === 1) {
+        if (Math.random() < 0.7) {
+            let num = 9;
+            while (num !== 0 && num !== 2 && num !== 6 && num !== 8){
+                num = computerRandom();
+            }
+            return num;
+        }
+        else {
+            return computerMedium();
+        }
+    }
+    else { 
+        /*
+        for (let i = 0; i <= 7; i++) {
+            let Condition = winningConditions[i];
+            let a = gameState[Condition[0]];
+            let b = gameState[Condition[1]];
+            let c = gameState[Condition[2]];
+            if (a === b && b !== c && c === "") {
+                number[Condition[2]] = Condition[2];
+                if (a === "O") {
+                    eval[Condition[2]] = 2;
+                } else if (a === "X") {
+                    eval[Condition[2]] = 1;
+                }
+            } else if (a === c && a !== b && b === "") {
+                number[Condition[1]] = Condition[1];
+                if (a === "O") {
+                    eval[Condition[1]] = 2;
+                } else if (a === "X") {
+                    eval[Condition[1]] = 1;
+                }
+            } else if (b === c && c !== a && a === "") {
+                number[Condition[0]] = Condition[0];
+                if (b === "O") {
+                    eval[Condition[0]] = 2;
+                } else if (b === "X") {
+                    eval[Condition[0]] = 1;
+                }
+            }
+        }
+        for (let i = 0; i <= 8; i++) {
+            if (number[i] !== 9 && eval[i] === 2) {
+                return i;
+            }
+        }
+        for (let i = 0; i <= 8; i++) {
+            if (number[i] !== 9 && eval[i] === 1) {
+                return i;
+            }
+        }
+        return computerRandom();
+        */
+       return computerMedium();
+    }
+}
+
+function computerSuperHard() {
+    let number = [9, 9, 9, 9, 9, 9, 9, 9, 9];
+    let eval = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    if (gameState[4] === ""){
+        return 4;
+    } else if (gameState[4] === "X" && move === 1) {
+        let num = 9;
+        while (num !== 0 && num !== 2 && num !== 6 && num !== 8){
+            num = computerRandom();
+        }
+        return num;
+    } else if (move === 3) {
+        for (let i = 0; i <= 7; i++) {
+            let Pattern = winningPatterns[i];
+            let lineIncludedVertex = [false, false, false, false];
+            let lineIncludedAresta = [false, false, false, false];
+            let goodLine = [0, 0, 0];
+            let numberIs = [9, 9];
+            let x = gameState[Pattern[0]];
+            let y = gameState[Pattern[1]];
+            if (x === y && x !== "") {
+                if ([gameState[lateralLines[0][0]], gameState[lateralLines[0][2]]].includes(x)){
+                    lineIncludedVertex[0] = true;
+                }
+                if ([gameState[lateralLines[1][0]], gameState[lateralLines[1][2]]].includes(x)){
+                    lineIncludedVertex[1] = true;
+                }
+                if ([gameState[lateralLines[2][0]], gameState[lateralLines[2][2]]].includes(x)){
+                    lineIncludedVertex[2] = true;
+                }
+                if ([gameState[lateralLines[3][0]], gameState[lateralLines[3][2]]].includes(x)){
+                    lineIncludedVertex[3] = true;
+                }
+                if (gameState[lateralLines[0][1]].includes(y)){
+                    lineIncludedAresta[0] = true;
+                }
+                if (gameState[lateralLines[1][1]].includes(y)){
+                    lineIncludedAresta[1] = true;
+                }
+                if (gameState[lateralLines[2][1]].includes(y)){
+                    lineIncludedAresta[2] = true;
+                }
+                if (gameState[lateralLines[3][1]].includes(y)){
+                    lineIncludedAresta[3] = true;
+                }
+
+                for (let j = 0; j<=3; j++){
+                    if (lineIncludedAresta[j] === true) {
+                        for (let n = 0; n<=3; n++){
+                            if (lineIncludedVertex[n] === true) {
+                                if (haveNumberInCommon(lateralLines[j], lateralLines[n])){
+                                    goodLine = lateralLines[n];
+                                }
+                            }
+                        }
+                    }
+                }
+                let m = 0;
+                for (let k = 0; k<=2; k++){
+                    if (gameState[Pattern[0]] !== gameState[goodLine[k]]) {
+                        numberIs[m] = goodLine[k];
+                        m = m + 1;
+                    }
+                }
+                let random = Math.round(Math.random() * 1);
+                return numberIs[random];
+            }
+        }
+        return computerHard();
+    } else { 
+        for (let i = 0; i <= 7; i++) {
+            let Condition = winningConditions[i];
+            let a = gameState[Condition[0]];
+            let b = gameState[Condition[1]];
+            let c = gameState[Condition[2]];
+            if (a === b && b !== c && c === "") {
+                number[Condition[2]] = Condition[2];
+                if (a === "O") {
+                    eval[Condition[2]] = 2;
+                } else if (a === "X") {
+                    eval[Condition[2]] = 1;
+                }
+            } else if (a === c && a !== b && b === "") {
+                number[Condition[1]] = Condition[1];
+                if (a === "O") {
+                    eval[Condition[1]] = 2;
+                } else if (a === "X") {
+                    eval[Condition[1]] = 1;
+                }
+            } else if (b === c && c !== a && a === "") {
+                number[Condition[0]] = Condition[0];
+                if (b === "O") {
+                    eval[Condition[0]] = 2;
+                } else if (b === "X") {
+                    eval[Condition[0]] = 1;
+                }
+            }
+        }
+        for (let i = 0; i <= 8; i++) {
+            if (number[i] !== 9 && eval[i] === 2) {
+                return i;
+            }
+        }
+        for (let i = 0; i <= 8; i++) {
+            if (number[i] !== 9 && eval[i] === 1) {
+                return i;
+            }
+        }
+        return computerRandom();
+    }
+}
+
+function haveNumberInCommon(line1, line2){
+    if (line1[0] === line2[0] || line1[0] === line2[2] || line1[2] === line2[0] || line1[2] === line2[2]) {
+        return true;
+    }
 }
 
 function computerPlayByLevel() {
@@ -134,8 +333,10 @@ function computerPlayByLevel() {
         cell = computerRandom();
     } else if (dificulty === "medium") {
         cell = computerMedium();
-    } else {
+    } else if (dificulty === "hard"){
         cell = computerHard();
+    } else {
+        cell = computerSuperHard();
     }
     return cell;
 }
@@ -146,6 +347,7 @@ function handlePlayerChange() {
 }
 function handleResultValidation() {
     let roundWon = false;
+    move = move + 1;
     for (let i = 0; i <= 7; i++) {
         const winCondition = winningConditions[i];
         let a = gameState[winCondition[0]];
@@ -231,11 +433,13 @@ function handleRestartGame() {
     gameActive = true;
     currentPlayer = "X";
     gameState = ["", "", "", "", "", "", "", "", ""];
+    move = 0;
     statusDisplay.innerHTML = currentPlayerTurn();
     document.querySelectorAll('.cell')
                .forEach(cell => cell.innerHTML = "");
     setOriginalColor();
     document.querySelectorAll('.cell').forEach(cell => cell.removeEventListener('click', handleCellClick));
+    document.querySelectorAll('li').forEach(li => li.removeEventListener('click', handleRestartByChangeOfLevel));
     document.querySelectorAll('li').forEach(li => li.addEventListener('click', prepareGame));
 }
 
@@ -248,8 +452,22 @@ function prepareGame(clickedDificultyEvent) {
     startGame();
 }
 
+function handleRestartByChangeOfLevel(clickedDificultyEvent) {
+    gameActive = true;
+    currentPlayer = "X";
+    gameState = ["", "", "", "", "", "", "", "", ""];
+    move = 0;
+    statusDisplay.innerHTML = currentPlayerTurn();
+    document.querySelectorAll('.cell')
+               .forEach(cell => cell.innerHTML = "");
+    setOriginalColor();
+    document.querySelectorAll('.cell').forEach(cell => cell.removeEventListener('click', handleCellClick));
+    prepareGame(clickedDificultyEvent);
+}
+
 function startGame() {
     document.querySelectorAll('li').forEach(li => li.removeEventListener('click', prepareGame));
+    document.querySelectorAll('li').forEach(li => li.addEventListener('click', handleRestartByChangeOfLevel));
     document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick));
 }
 /*
