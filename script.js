@@ -137,6 +137,7 @@ function handleResultValidation() {
         }
         if (a === b && b === c) {
             roundWon = true;
+            changeWinnerColor(winCondition);
             break
         }
     }
@@ -161,6 +162,13 @@ function handleResultValidation() {
     */
     handlePlayerChange();
 }
+
+function changeWinnerColor(winCondition) {
+    document.querySelector(`[data-cell-index="${winCondition[0]}"]`).style.color = "blue";
+    document.querySelector(`[data-cell-index="${winCondition[1]}"]`).style.color = "blue";
+    document.querySelector(`[data-cell-index="${winCondition[2]}"]`).style.color = "blue";
+}
+
 function handleCellClick(clickedCellEvent) {
     /*
     We will save the clicked html element in a variable for easier further use
