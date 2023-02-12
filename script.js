@@ -46,22 +46,7 @@ const winningConditions = [
     [0, 4, 8],
     [2, 4, 6]
 ];
-const winningPatterns = [
-    [0, 5],
-    [0, 7],
-    [2, 3],
-    [2, 7],
-    [6, 1],
-    [6, 5],
-    [8, 1],
-    [8, 3]
-];
-const lateralLines = [
-    [0, 1, 2],
-    [6, 7, 8],
-    [0, 3, 6],
-    [2, 5, 8]
-];
+
 /*
 We set the inital message to let the players know whose turn it is
 */
@@ -113,48 +98,16 @@ function computerRandom() {
     return random;
 }
 
-function computerMedium() {
-    let number = 9;
-    for (let i = 0; i <= 7; i++) {
-        if (number === 9) {
-            let Condition = winningConditions[i];
-            let a = gameState[Condition[0]];
-            let b = gameState[Condition[1]];
-            let c = gameState[Condition[2]];
-            if (a === b && b !== c && c === "") {
-                number = Condition[2];
-            } else if (a === c && a !== b && b === "") {
-                number = Condition[1];
-            } else if (b === c && c !== a && a === "") {
-                number = Condition[0];
-            } else {
-                number = 9;
-            }
-        }
-        else {
-            return number;
-        }
-    }
-    if (number === 9) {
-        return computerRandom();
-    }
-    else return number;
-}
-
-function computerHard() {
-    computerRandom();
-}
-
 function computerPlayByLevel() {
     let cell;
     if (dificulty === "easy") {
         cell = computerRandom();
     } else if (dificulty === "medium") {
-        cell = computerMedium();
+        cell = computerRandom();
     } else if (dificulty === "hard"){
-        cell = computerHard();
+        cell = computerRandom();
     } else {
-        cell = computerSuperHard();
+        cell = computerRandom();
     }
     return cell;
 }
