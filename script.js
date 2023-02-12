@@ -112,6 +112,28 @@ function computerPlayByLevel() {
     return cell;
 }
 
+function evaluatePosition() {
+
+}
+
+function evaluatePossibleMoves() {
+    let cellsState;
+    let futureState;
+    cellsState = gameState;
+    futureState = [cellsState, cellsState, cellsState];
+    for (let i = 0; i <= 8; i++) {
+        if (cellsState[i] === "") {
+            futureState[0][i] === "O";
+        }
+    }
+    if (count >= 8) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 function handlePlayerChange() {
     currentPlayer = currentPlayer === "X" ? "O" : "X";
     statusDisplay.innerHTML = currentPlayerTurn();
